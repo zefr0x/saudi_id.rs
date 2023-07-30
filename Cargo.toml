@@ -1,0 +1,22 @@
+[package]
+name = "saudi_id"
+version = "0.1.0"
+authors = ["zefr0x"]
+edition = "2021"
+description = "Parse (validate) or randomly generate Saudi Arabian national IDs"
+readme = "README.md"
+homepage = "https://github.com/zer0-x/saudi_id"
+repository = "https://github.com/zer0-x/saudi_id"
+license = "LGPL-3.0"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+luhnr = "0.3.4"
+
+[[example]]
+name = "validate"
+path = "examples/validate.rs"
+
+[[example]]
+name = "generate"
+path = "examples/generate.rs"
