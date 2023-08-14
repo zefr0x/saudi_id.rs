@@ -5,8 +5,8 @@ authors = ["zefr0x"]
 edition = "2021"
 description = "Parse (validate) or randomly generate Saudi Arabian national IDs"
 readme = "README.md"
-homepage = "https://github.com/zer0-x/saudi_id"
-repository = "https://github.com/zer0-x/saudi_id"
+homepage = "https://github.com/zefr0x/saudi_id.rs"
+repository = "https://github.com/zefr0x/saudi_id.rs"
 license = "LGPL-3.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
