@@ -175,13 +175,31 @@ mod tests {
     #[test]
     fn random_generated_tests() {
         for _ in 0..10_000_usize {
-            let citizen_id = Id::new(&IdType::Citizen);
-            Id::try_from(citizen_id.digits.clone()).unwrap();
-            Id::from_str(&citizen_id.to_string()).unwrap();
+            let cit_id = Id::new(&IdType::Citizen);
+            assert_eq!(cit_id, Id::try_from(cit_id.digits.clone()).unwrap());
+            assert_eq!(cit_id, Id::from_str(&cit_id.to_string()).unwrap());
+            assert_eq!(
+                cit_id.to_string(),
+                cit_id
+                    .digits
+                    .clone()
+                    .iter()
+                    .map(ToString::to_string)
+                    .collect::<String>()
+            );
 
-            let resident_id = Id::new(&IdType::Resident);
-            Id::try_from(resident_id.digits.clone()).unwrap();
-            Id::from_str(&resident_id.to_string()).unwrap();
+            let res_id = Id::new(&IdType::Resident);
+            assert_eq!(res_id, Id::try_from(res_id.digits.clone()).unwrap());
+            assert_eq!(res_id, Id::from_str(&res_id.to_string()).unwrap());
+            assert_eq!(
+                res_id.to_string(),
+                res_id
+                    .digits
+                    .clone()
+                    .iter()
+                    .map(ToString::to_string)
+                    .collect::<String>()
+            );
         }
     }
 }
