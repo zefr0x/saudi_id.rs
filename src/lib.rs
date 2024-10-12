@@ -131,6 +131,7 @@ impl core::str::FromStr for Id {
 }
 
 impl core::fmt::Display for Id {
+    #[expect(clippy::unwrap_used, reason = "Should never fail")]
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(
             f,
@@ -138,8 +139,13 @@ impl core::fmt::Display for Id {
             self.digits
                 .clone()
                 .into_iter()
-                .map(|digit| digit.to_string())
-                .collect::<String>()
+                .enumerate()
+                .fold(0, |acc: u32, (i, digit)| {
+                    const ITER_INDEXES: usize = ID_SIZE - 1;
+
+                    acc + (u32::from(digit)
+                        * (10_u32.pow(u32::try_from(ITER_INDEXES - i).unwrap())))
+                })
         )
     }
 }
