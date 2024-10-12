@@ -2,14 +2,24 @@
 //!
 //! Used to validate IDs and find thier type (Citizen or Resident), or used to test software by generating random valid IDs.
 
+// TODO: Support no_std.
+
 extern crate luhnr;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum IdType {
-    Citizen,
-    Resident,
+    Citizen = 1,
+    Resident = 2,
 }
 
+impl IdType {
+    #[must_use]
+    pub const fn prefix(self) -> u8 {
+        self as u8
+    }
+}
+
+#[derive(PartialEq, Eq, Debug)]
 pub struct Id {
     pub digits: Vec<u8>,
 }
@@ -20,32 +30,40 @@ pub enum ParseError {
 }
 
 const ID_SIZE: usize = 10;
-const CITIZEN_PREFIX: u8 = 1;
-const RESIDENT_PREFIX: u8 = 2;
+const CITIZEN_PREFIX: u8 = IdType::Citizen.prefix();
+const RESIDENT_PREFIX: u8 = IdType::Resident.prefix();
 
 impl Id {
     /// Create a new random ID
-    pub fn new(id_type: IdType) -> Self {
-        match id_type {
+    #[expect(clippy::missing_panics_doc, reason = "Never panics")]
+    #[must_use]
+    pub fn new(id_type: &IdType) -> Self {
+        match *id_type {
             IdType::Citizen => {
+                #[expect(clippy::unwrap_used, reason = "Arguments always valid")]
                 let digits = luhnr::generate_with_prefix(ID_SIZE, &[CITIZEN_PREFIX]).unwrap();
 
-                Id { digits }
+                Self { digits }
             }
             IdType::Resident => {
+                #[expect(clippy::unwrap_used, reason = "Arguments always valid")]
                 let digits = luhnr::generate_with_prefix(ID_SIZE, &[RESIDENT_PREFIX]).unwrap();
 
-                Id { digits }
+                Self { digits }
             }
         }
     }
 
-    fn validate(digits: &Vec<u8>) -> bool {
+    fn validate(digits: &[u8]) -> bool {
+        // NOTE: The second statment is less likely to fail, but it depends on your usage.
         luhnr::validate(digits) && digits.len() == ID_SIZE
     }
 
+    #[expect(clippy::missing_panics_doc, reason = "Never panics")]
+    #[must_use]
     pub fn get_type(&self) -> IdType {
-        match self.digits[0] {
+        #[expect(clippy::unwrap_used, reason = "Vec always has first digit")]
+        match *self.digits.first().unwrap() {
             CITIZEN_PREFIX => IdType::Citizen,
             RESIDENT_PREFIX => IdType::Resident,
             _ => unreachable!(),
@@ -66,12 +84,12 @@ impl TryFrom<u32> for Id {
 
         while id > 0 {
             digits.insert(0, (id % 10) as u8);
-            id /= 10
+            id /= 10;
         }
 
         // Validate ID
-        if Id::validate(&digits) {
-            Ok(Id { digits })
+        if Self::validate(&digits) {
+            Ok(Self { digits })
         } else {
             Err(ParseError::InvalidId)
         }
@@ -88,15 +106,15 @@ impl TryFrom<Vec<u8>> for Id {
     /// 3. First digit is not 1 or 2.
     fn try_from(digits: Vec<u8>) -> Result<Self, Self::Error> {
         // Validate ID
-        if Id::validate(&digits) {
-            Ok(Id { digits })
+        if Self::validate(&digits) {
+            Ok(Self { digits })
         } else {
             Err(ParseError::InvalidId)
         }
     }
 }
 
-impl std::str::FromStr for Id {
+impl core::str::FromStr for Id {
     type Err = ParseError;
 
     /// # Errors
@@ -106,54 +124,56 @@ impl std::str::FromStr for Id {
     /// 3. More or less then 10 digits.
     /// 4. First digit is not 1 or 2.
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.parse::<u32>() {
-            Ok(num) => match Id::try_from(num) {
-                Ok(id) => Ok(id),
-                Err(_) => Err(ParseError::InvalidId),
-            },
-            Err(_) => Err(ParseError::InvalidId),
-        }
+        s.parse::<u32>().map_or(Err(ParseError::InvalidId), |num| {
+            Self::try_from(num).map_or(Err(ParseError::InvalidId), Ok)
+        })
     }
 }
 
-impl ToString for Id {
-    fn to_string(&self) -> String {
-        self.digits
-            .clone()
-            .into_iter()
-            .map(|digit| digit.to_string())
-            .collect()
+impl core::fmt::Display for Id {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            self.digits
+                .clone()
+                .into_iter()
+                .map(|digit| digit.to_string())
+                .collect::<String>()
+        )
     }
 }
 
 impl Clone for Id {
     fn clone(&self) -> Self {
-        Id {
+        Self {
             digits: self.digits.clone(),
         }
     }
 }
 
+#[expect(clippy::allow_attributes_without_reason)]
+#[expect(clippy::unwrap_used)]
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
+    use core::str::FromStr;
 
     use super::*;
 
     #[test]
     fn static_tests() {
-        let id = Id::try_from(1581872353).unwrap();
+        let id = Id::try_from(1_581_872_353).unwrap();
         assert_eq!(id.get_type(), IdType::Citizen);
     }
 
     #[test]
     fn random_generated_tests() {
-        for _ in 0..10000 {
-            let citizen_id = Id::new(IdType::Citizen);
+        for _ in 0..10_000_usize {
+            let citizen_id = Id::new(&IdType::Citizen);
             Id::try_from(citizen_id.digits.clone()).unwrap();
             Id::from_str(&citizen_id.to_string()).unwrap();
 
-            let resident_id = Id::new(IdType::Resident);
+            let resident_id = Id::new(&IdType::Resident);
             Id::try_from(resident_id.digits.clone()).unwrap();
             Id::from_str(&resident_id.to_string()).unwrap();
         }

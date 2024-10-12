@@ -1,7 +1,7 @@
 use saudi_id::{Id, IdType};
 
 fn main() {
-    let id = Id::try_from(1564437091);
+    let id = Id::try_from(1_564_437_091);
 
     match id {
         Ok(id) => match id.get_type() {
@@ -13,7 +13,7 @@ fn main() {
             }
         },
         Err(_) => {
-            println!("Invalid ID")
+            println!("Invalid ID");
         }
     }
 }
