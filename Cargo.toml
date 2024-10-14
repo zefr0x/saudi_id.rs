@@ -8,7 +8,9 @@ readme = "README.md"
 homepage = "https://github.com/zefr0x/saudi_id.rs"
 repository = "https://github.com/zefr0x/saudi_id.rs"
 license = "LGPL-3.0"
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+keywords = ["saudi", "parse", "id", "generate", "random"]
+categories = ["parsing"]
+exclude = [".github", ".gitignore", ".pre-commit-config.yaml", "CONTRIBUTING.md", "justfile"]
 
 [dependencies]
 luhnr = "0.3.4"
