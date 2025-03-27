@@ -5,6 +5,7 @@ authors = ["zefr0x"]
 edition = "2021"
 description = "Parse (validate) or randomly generate Saudi Arabian national IDs"
 readme = "README.md"
+documentation = "https://docs.rs/saudi_id"
 homepage = "https://github.com/zefr0x/saudi_id.rs"
 repository = "https://github.com/zefr0x/saudi_id.rs"
 license = "LGPL-3.0"

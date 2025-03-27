@@ -1,3 +1,7 @@
+[![crates.io](https://img.shields.io/crates/v/saudi_id.svg)](https://crates.io/crates/saudi_id)
+[![docs.rs](https://docs.rs/saudi_id/badge.svg)](https://docs.rs/saudi_id)
+[![release](https://github.com/zefr0x/saudi_id.rs/actions/workflows/publish_release.yml/badge.svg)](https://github.com/zefr0x/saudi_id.rs/actions/workflows/publish_release.yml)
+
 <div align = center>
 
 <h1>Saudi ID</h1>
