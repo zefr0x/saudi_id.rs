@@ -1,6 +1,6 @@
-//! Parse (validate) from multible data types or generate new random [Saudi Arabian national IDs](https://en.wikipedia.org/wiki/Saudi_Arabian_identity_card).
+//! Parse (validate) from multiple data types or generate new random [Saudi Arabian national IDs](https://en.wikipedia.org/wiki/Saudi_Arabian_identity_card).
 //!
-//! Used to validate IDs and find thier type (Citizen or Resident), or used to test software by generating random valid IDs.
+//! Used to validate IDs and find their type (Citizen or Resident), or used to test software by generating random valid IDs.
 
 // TODO: Support no_std.
 
@@ -55,7 +55,7 @@ impl Id {
     }
 
     fn validate(digits: &[u8]) -> bool {
-        // NOTE: The second statment is less likely to fail, but it depends on your usage.
+        // NOTE: The second statement is less likely to fail, but it depends on your usage.
         luhnr::validate(digits) && digits.len() == ID_SIZE
     }
 
@@ -76,8 +76,8 @@ impl TryFrom<u32> for Id {
 
     /// # Errors
     ///
-    /// 1. Not using the Luhn Algorithm.
-    /// 2. More or less then 10 digits.
+    /// 1. No valid usage of the Luhn Algorithm.
+    /// 2. More or less than 10 digits.
     /// 3. First digit is not 1 or 2.
     fn try_from(mut id: u32) -> Result<Self, Self::Error> {
         let mut digits: Vec<u8> = Vec::with_capacity(ID_SIZE);
@@ -101,8 +101,8 @@ impl TryFrom<Vec<u8>> for Id {
 
     /// # Errors
     ///
-    /// 1. Not using the Luhn Algorithm.
-    /// 2. More or less then 10 digits.
+    /// 1. No valid usage of the Luhn Algorithm.
+    /// 2. More or less than 10 digits.
     /// 3. First digit is not 1 or 2.
     fn try_from(digits: Vec<u8>) -> Result<Self, Self::Error> {
         // Validate ID
@@ -120,8 +120,8 @@ impl core::str::FromStr for Id {
     /// # Errors
     ///
     /// 1. String can't be parsed as an integer.
-    /// 2. Not using the Luhn Algorithm.
-    /// 3. More or less then 10 digits.
+    /// 2. No valid usage of the Luhn Algorithm.
+    /// 3. More or less than 10 digits.
     /// 4. First digit is not 1 or 2.
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         s.parse::<u32>().map_or(Err(ParseError::InvalidId), |num| {
